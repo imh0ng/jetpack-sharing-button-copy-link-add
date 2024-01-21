@@ -1,0 +1,8 @@
+.share-copy-link svg {
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font: normal 18px/1 social-logos;
+    text-align: center;
+    vertical-align: top;
+}
