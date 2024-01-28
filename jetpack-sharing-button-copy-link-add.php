@@ -7,6 +7,7 @@ function get_current_title() {
 	$title = get_the_title($post_id);
 	wp_send_json(
 		array(
-			'title' => $title)
+			'title' => $title
+		)
 	);
 }
