@@ -11,25 +11,41 @@ document.addEventListener('DOMContentLoaded', function () {
 		// Click event
 		copyButton.querySelector('a').addEventListener('click', function(event) {
 			event.preventDefault();
-			var title = document.title;
 			var url = window.location.href;
-			var textToCopy = title + '\n' + url;
 
-			var tempTextArea = document.createElement('textarea');
-			tempTextArea.value = textToCopy;
-			document.body.appendChild(tempTextArea);
-			tempTextArea.select();
-			document.execCommand('copy');
-			document.body.removeChild(tempTextArea);
+			fetch('/wp-admin/admin-ajax.php', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: 'action=get_current_title&url=' + encodeURIComponent(url)
+			})
+				.then(response => response.json())
+				.then(data => {
+				var postTitle = data.title;
+				if (postTitle != "undefined") {
+					var textToCopy = postTitle + '\n' + url;
+					var tempTextArea = document.createElement('textarea');
+					tempTextArea.value = textToCopy;
+					document.body.appendChild(tempTextArea);
+					tempTextArea.select();
+					document.execCommand('copy');
+					document.body.removeChild(tempTextArea);
 
-			// Change icon
-			var clickedIcon = `<svg width="18" height="18" viewBox="0 0 24 24" opacity="1" fill="#2C3338" fill-rule="evenodd" clip-rule="evenodd" xmlns="http://www.w3.org/2000/svg" class="JLquNpQVlysAamuh5lJO" aria-hidden="true" focusable="false"><g opacity="1"><path d="M11 17.768l-4.884-4.884 1.768-1.768L11 14.232l8.658-8.658C17.823 3.39 15.075 2 12 2 6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10c0-1.528-.353-2.97-.966-4.266L11 17.768z"></path></g></svg>`;
-			this.innerHTML = clickedIcon;
+					// Change icon
+					var clickedIcon = `<svg width="18" height="18" viewBox="0 0 24 24" opacity="1" fill="#2C3338" fill-rule="evenodd" clip-rule="evenodd" xmlns="http://www.w3.org/2000/svg" class="JLquNpQVlysAamuh5lJO" aria-hidden="true" focusable="false"><g opacity="1"><path d="M11 17.768l-4.884-4.884 1.768-1.768L11 14.232l8.658-8.658C17.823 3.39 15.075 2 12 2 6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10c0-1.528-.353-2.97-.966-4.266L11 17.768z"></path></g></svg>`;
+					this.innerHTML = clickedIcon;
 
-			// Restore original icon after 3 seconds
-			setTimeout(() => {
-				this.innerHTML = initialIcon;
-			}, 3000);
+					// Restore original icon after 3 seconds
+					setTimeout(() => {
+						this.innerHTML = initialIcon;
+					}, 3000);
+				}
+
+			})
+				.catch(error => console.error('Error:', error));
+
+
 		});
 
 		var ul = shareBlock.querySelector('ul');
